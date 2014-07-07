@@ -1,7 +1,10 @@
 var requestHandler = function(request, response){
+  console.log('Serving ' + request.method + ' for request to ' + request.url);
+  
   var statusCode = 200;
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'text/plain';
+  
   response.writeHead(statusCode, headers);
   response.end('Welcome to Middle It!');
 };
