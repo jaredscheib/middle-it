@@ -35,14 +35,44 @@ module.exports = function(grunt){
       dev: {
         script: 'server.js'
       }
-    }
+    },
+
+    shell: {
+      prodServer: {
+        command: 'git push azure master'
+      }
+    },
 
   });
 
   //Load plugins
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-shell');
 
-  //Register tasks
+  //Register dev tasks
+  grunt.registerTask('server-dev', function(target){
+    var nodemon = grunt.util.spawn({
+      cmd: 'grunt',
+      grunt: true,
+      args: 'nodemon'
+    });
+    nodemon.stdout.pipe(process.stdout);
+    nodemon.stderr.pipe(process.stderr);
+
+    // grunt.task.run(['watch']);
+  });
+
+  //Register main tasks
   grunt.registerTask('default', ['nodemon']);
+  grunt.registerTask('test'); //test
+  grunt.registerTask('build'); //build client files
+  grunt.registerTask('upload', function(n){
+    if( grunt.option('prod') ){
+      grunt.task.run(['shell']);
+    }else{
+      grunt.task.run(['server-dev']);
+    }
+  });
+  grunt.registerTask('deploy', ['upload']); //['test', 'build', 'upload']);
 };
