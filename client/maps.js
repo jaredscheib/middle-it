@@ -1,15 +1,62 @@
-var initializeMap = function(centralCoords) {
-  centralCoords = centralCoords || {longitude: -122.4091271, latitude: 37.7837475}; //Hack Reactor coords
+var userData = {user: 'Jared', geoPosition: {}, venueType: ['bar']}
+var locationKnown = false;
+
+var initializeMiddleMap = function(middleDecision) {
+  middleCoords = {longitude: middleDecision.geoPosition.coords.longitude, latitude: middleDecision.geoPosition.coords.latitude};
+
+  var middleCoordsGoogle = new google.maps.LatLng(middleCoords.longitude, middleCoords.latitude);
 
   var mapOptions = {
-    zoom: 8,
-    center: new google.maps.LatLng(centralCoords.longitude, centralCoords.latitude)
+    center: middleCoordsGoogle,
+    zoom: 15,
   };
+
+  var request = {
+    location: middleCoordsGoogle,
+    radius: 500, //in meters
+    types: venueType
+  };
+
+
 
   var mapCanvas = document.getElementById('map-canvas');
   var map = new google.maps.Map(mapCanvas, mapOptions);
   $(mapCanvas).css({width: '500px', height: '500px'})
   console.log($(mapCanvas));
+};
+
+var sendUserData = function(user){
+  if( !locationKnown ) {
+    console.log('location not known')
+    return;
+  }
+  
+  userData['user'] = user;
+  if( user === 'Jared' ){
+    userData.geoPosition.coords.longitude = $('input[name=user1X]').val();
+    userData.geoPosition.coords.latitude = $('input[name=user1Y]').val();
+    userData.venueType[0] = $('input[name=user1Venue]').val();
+  }else if( user === 'Carly' ){
+    //parse and stringify to get around not being able to set coords to send to server
+    userData = JSON.parse(JSON.stringify(userData));
+    userData.geoPosition.coords.longitude = $('input[name=user2X]').val();
+    userData.geoPosition.coords.latitude = $('input[name=user2Y]').val();
+    userData.venueType[0] = $('input[name=user2Venue]').val();
+  }
+  console.log(userData);
+
+  $.ajax({
+    type: 'POST',
+    url: 'middle',
+    data: JSON.stringify(userData),
+    success: function(serverResponse){
+      var parsedResponse = JSON.parse(serverResponse);
+      if( parsedResponse.middleMatch ) initializeMiddleMap(parsedResponse);
+    },
+    error: function(){
+      alert('Failed to POST coordinates. Please try again.');
+    }
+  });
 };
 
 var loadScript = function() {
@@ -21,25 +68,13 @@ var loadScript = function() {
   }
 
   //If user opts in to browser ascertaining their location, send their coords to server
-  var postData = {type: '', data: ''}
   window.navigator.geolocation.getCurrentPosition(function(geoPosition){
-    postData.type = 'geoPosition',
-    postData.data = geoPosition;
-
-    $.ajax({
-      type: 'POST',
-      url: 'coords',
-      data: JSON.stringify(postData),
-      success: function(serverResponse){
-        var parsedResponse = JSON.parse(serverResponse);
-        var centralCoords = {longitude: parsedResponse.data.coords.longitude, latitude: parsedResponse.data.coords.latitude};
-        console.log('Data received from server: ', centralCoords);
-        initializeMap(centralCoords);
-      },
-      error: function(){
-        alert('Failed to POST coordinates. Please try again.');
-      }
-    });
+    userData['geoPosition'] = geoPosition;
+    $('input[name=user1X]').val(userData.geoPosition.coords.longitude)
+    $('input[name=user1Y]').val(userData.geoPosition.coords.latitude)
+    $('input[name=user1Y]').val(userData.geoPosition.coords.latitude)
+    locationKnown = true;
+    console.log(userData);
   });
 };
 

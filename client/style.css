@@ -22,9 +22,28 @@ span {
 	font-size: 30px;
 }
 
+.venueType {
+	margin-left: 10px;
+}
+
 #locationError {
 	border: 1px solid black;
 	font-size: 25px;
 	color: red;
 	padding: 3px;
+}
+
+input {
+	padding: 5px;
+}
+
+.textInput {
+	font-size: 20px;
+	width: 80px;
+}
+
+.sendUserData {
+	font-size: 20px;
+	width: 150px;
+	margin-left: 10px;
 }
