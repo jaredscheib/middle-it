@@ -8,24 +8,47 @@ body {
   text-align: center;
 }
 
-/* add @media for mobile screens */
-div #map-canvas {
-  width: 500px;
-  height: 500px;
-  margin: 10px auto 0 auto;
-  border: 2px solid black;
-}
-
 .hide {
 	visibility: hidden;
 }
 
-.show {
-	visibility: visible;
+div {
+}
+
+#ui {
+	display: inline-block;
+	width: 1200px;
+	overflow: hidden;
+}
+
+.userDiv {
+	float: left;
+	padding: 20px;
+	margin-top: -80px;
+	text-align: justify;
+    -ms-text-justify: distribute-all-lines;
+    text-justify: distribute-all-lines;
+    display: inline-block;
+    width: 300px;
+}
+
+/* add @media for mobile screens */
+#map-canvas {
+	float: left;
+	width: 500px;
+	height: 500px;
+	margin: 10px auto 0 auto;
+	border: 2px solid black;
 }
 
 h1 {
 	font-size: 45px;
+}
+
+h2 {
+	margin-bottom: -10px;
+	text-align: center;
+	font-size: 35px;
 }
 
 span {
@@ -47,7 +70,7 @@ input {
 	padding: 5px;
 }
 
-.textInput {
+.input {
 	font-size: 15px;
 	width: 80px;
 }
@@ -55,5 +78,5 @@ input {
 .sendUserData {
 	font-size: 20px;
 	width: 150px;
-	margin-left: 10px;
+	margin-left: 80px;
 }
