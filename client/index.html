@@ -10,44 +10,51 @@
     <script src="maps.js"></script>
   </head>
   <body class="hide">
+    <div id="locationError" class="hide">
+      <span>MiddleIt cannot be used without your location. Refresh the page to try again. Thank you for your understanding.</span>
+    </div>
+    <div class="clear"></div>
     <div id="ui">
       <h1>MiddleIt</h1>
       <div id="user1" class='userDiv'>
         <div class="choice1">
-          <h2>User One</h2>
+          <h2>Sam (User 1)</h2>
           <span>Location:</span>
           <input class="input" name="user1Long" type="text" placeholder="Longitude">
           <input class="input" name="user1Lat" type="text" placeholder="Latitude"><br>
           <hr style="margin-top: 20px">
           <span class="venueType">Venue:</span>
           <select class="selector" id="user1VenueType"></select><br>
-          <input class="sendUserData" type="button" value="Send" onclick="sendUserData('Jared')">
+          <input class="sendUserData" type="button" value="Send" onclick="sendVenueType('Sam')">
         </div>
         <hr class="hide">
         <div id="user1choice2" class="hide">
           <span class="venueType">Choice:</span>
           <select class="selector" id="user1VenueChoice"></select><br>
-          <input class="sendUserData" type="button" value="Send" onclick="sendUserData('Jared')">
+          <input class="sendUserData" type="button" value="Send" onclick="sendVenueChoice('Sam')">
           <hr class="hide">
         </div>
       </div>
       <div id="map-canvas"></div>
       <div id="user2" class='userDiv'>
         <div class="choice1">
-          <h2>User Two</h2>
-          <span>Location:</span>
-          <input class="input" name="user2Long" type="text" placeholder="Longitude">
-          <input class="input" name="user2Lat" type="text" placeholder="Latitude"><br>
+          <h2>Evan (User 2)</h2>
+          <div style="display:inline; overflow: hidden">
+            <span>Loc:</span>
+            <input class="input" name="user2Long" type="text" placeholder="Longitude">
+            <input class="input" name="user2Lat" type="text" placeholder="Latitude">
+            <input class="sendUserData" name="sendCustomGeoposition" type="button" value="Send" onclick="sendCustomGeoposition('Evan')">
+          </div>
           <hr style="margin-top: 20px">
           <span class="venueType">Venue:</span>
           <select class="selector" id="user2VenueType"></select><br>
-          <input class="sendUserData" type="button" value="Send" onclick="sendUserData('Carly')">
+          <input class="sendUserData" type="button" value="Send" onclick="sendVenueType('Evan')">
         </div>
         <hr class="hide">
         <div id="user2choice2" class="hide">
           <span class="venueType">Choice:</span>
           <select class="selector" id="user2VenueChoice"></select><br>
-          <input class="sendUserData" type="button" value="Send" onclick="sendUserData('Carly')">
+          <input class="sendUserData" type="button" value="Send" onclick="sendVenueChoice('Evan')">
           <hr class="hide">
         </div>
       </div>

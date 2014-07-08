@@ -1,5 +1,10 @@
-var userData = {user: 'Jared', geoPosition: {}, venueType: ['bar']}
-var locationKnown = false;
+var userData = {
+  user: undefined,
+  type: undefined,
+  geoPosition: undefined,
+  venueType: [],
+  venueChoice: []
+};
 
 var initializeMiddleMap = function(middleDecision) {
   var venueChoices = [];
@@ -19,7 +24,7 @@ var initializeMiddleMap = function(middleDecision) {
   var request = {
     location: middleCoords,
     // radius: 200, //in meters
-    types: [middleDecision.winningVenue.winner],
+    types: [middleDecision.winningItem.winner],
     openNow: true,
     rankBy: google.maps.places.RankBy.DISTANCE
   };
@@ -31,7 +36,7 @@ var initializeMiddleMap = function(middleDecision) {
   service.nearbySearch(request, function(results, status){
     if( status == google.maps.places.PlacesServiceStatus.OK ){
       for( var i = 0; i < results.length; i++ ){
-        if( i === 3 ){
+        if( i === 5 ){ //number of choices to reveal to users
           revealChoice2(venueChoices);
         }
         venueChoices.push(results[i]);
@@ -78,57 +83,85 @@ var revealChoice2 = function(venueChoices){
   $('.hide').removeClass('hide');
 };
 
-var sendUserData = function(user){
-  if( !locationKnown ) {
-    console.log('Location not yet known')
-    return;
-  }
-  
+var sendVenueType = function(user){
   userData['user'] = user;
-  if( user === 'Jared' ){
-    userData.geoPosition.coords.longitude = $('input[name=user1Long]').val();
-    userData.geoPosition.coords.latitude = $('input[name=user1Lat]').val();
+  if( user === 'Sam' ){
     userData.venueType[0] = $('#user1VenueType').val();
-  }else if( user === 'Carly' ){
-    //parse and stringify to get around not being able to set coords to send to server
-    userData = JSON.parse(JSON.stringify(userData));
-    userData.geoPosition.coords.longitude = $('input[name=user2Long]').val();
-    userData.geoPosition.coords.latitude = $('input[name=user2Lat]').val();
+  }else if( user === 'Evan' ){
     userData.venueType[0] = $('#user2VenueType').val();
   }
-  console.log('POST userData: ', userData);
 
+  postData(userData);
+  console.log('POST userData: ', userData);
+};
+
+var sendCustomGeoposition = function(user){
+  userData['user'] = user;
+  userData = JSON.parse(JSON.stringify(userData)); //workaround to set coords
+  userData.type = 'geoPosition';
+  userData.geoPosition.coords.longitude = $('input[name=user2Long]').val();
+  userData.geoPosition.coords.latitude = $('input[name=user2Lat]').val();
+  postData(userData);
+};
+
+var postData = function(userData){
   $.ajax({
     type: 'POST',
     url: 'middle',
     data: JSON.stringify(userData),
     success: function(serverResponse){
-      var parsedResponse = JSON.parse(serverResponse);
-      console.log('Response from server: ', parsedResponse);
-      if( parsedResponse.middleMatch ) initializeMiddleMap(parsedResponse);
+      serverResponse = JSON.parse(serverResponse);
+      console.log('Response from server: ', serverResponse);
+      responseRouter[serverResponse.type](serverResponse.data);
     },
     error: function(){
-      alert('Failed to POST coordinates. Please try again.');
+      console.log('Failed to POST '+JSON.stringify(userData)+'. Please try again.');
     }
   });
+};
+
+var responseRouter = {
+  user: function(response){
+    console.log('Successfully stored user: ', response);
+  },
+  userCoords: function(response){
+    console.log('Successfully stored userCoords: ', response);
+  },
+  middleCoords: function(response){
+    console.log('Successfully matched middle: ', response);
+    initializeMiddleMap(response);
+  }
 };
 
 var loadScript = function() {
   populateSelects();
   $('body').removeClass('hide');
-  // var optIn = confirm('In order to use MiddleIt we will ask for your current location. Click Ok to accept or cancel to opt out.')
-  // if( !optIn ) {
-  //   document.getElementById('ui').innerHTML += ('<span id="locationError">MiddleIt cannot be used without your location. \
-  //     Refresh the page to try again. Thank you for your understanding.</span>')
-  //   return;
-  // }
+  var optIn = confirm('In order to use MiddleIt we will ask for your current location. Click Ok to accept or cancel to opt out.')
+  if( !optIn ) {
+    $('#locationError').removeClass('hide');
+    return;
+  }
 
-  //If user opts in to browser ascertaining their location, send their coords to server
+  //send coords to server (would usually notify of location use first)
   window.navigator.geolocation.getCurrentPosition(function(geoPosition){
-    userData['geoPosition'] = geoPosition;
+    userData.user = 'Sam';
+    userData.type = 'geoPosition';
+    userData.geoPosition = geoPosition;
+    console.log(userData);
     $('input[name=user1Long]').val(userData.geoPosition.coords.longitude)
     $('input[name=user1Lat]').val(userData.geoPosition.coords.latitude)
-    locationKnown = true;
+    postData(userData);
+  });
+
+  //second user with auto-gen coordinates since testing from one computer
+  window.navigator.geolocation.getCurrentPosition(function(geoPosition){
+    userData.user = 'Evan';
+    userData.type = 'geoPosition';
+    userData.geoPosition = geoPosition;
+    console.log(userData);
+    $('input[name=user2Long]').val(userData.geoPosition.coords.longitude)
+    $('input[name=user2Lat]').val(userData.geoPosition.coords.latitude)
+    postData(userData);
   });
 };
 

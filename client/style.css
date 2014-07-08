@@ -65,9 +65,11 @@ span {
 
 #locationError {
 	border: 1px solid black;
-	font-size: 25px;
+	font-size: 15px;
 	color: red;
-	padding: 3px;
+	margin-bottom: -35px;
+	padding: 2px;
+
 }
 
 input {
@@ -88,11 +90,18 @@ input {
 	border-radius: 10px;
 }
 
+input[name=sendCustomGeoposition] {
+	float: right;
+	width: 50px;
+	margin: auto;
+	margin-top: 12px;	
+}
+
 select[class=selector] {
 	width: 140px;
 	font-size: 15px;
 	width: 80px;
-	border-radius: 10px;	
+	border-radius: 10px;
 }
 
 hr {
