@@ -3,12 +3,22 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,places"></script>
     <script src="maps.js"></script>
   </head>
   <body>
-    <div id="ui"></div>
+    <div id="ui">
+      <h1>MiddleIt</h1>
+      <div id="location1">
+        <span id="user1Coords">User One Location: </span>
+      </div>
+      <div id="location2">
+        <span id="user2Coords">User Two Location: </span>
+      </div>
+    </div>
     <div id="map-canvas"></div>
   </body>
 </html>

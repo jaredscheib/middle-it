@@ -76,7 +76,7 @@ var methodRouter = {
     request.on('end', function(err){
       if( err ) throw err;
 
-      var responseBody = 'Data received: ' + dataBody; //depends on what user sends
+      var responseBody = dataBody; //depends on what user sends
       
       serveAssets(response, responseBody, 201);
       
