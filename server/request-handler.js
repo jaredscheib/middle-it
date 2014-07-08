@@ -29,7 +29,7 @@ var urlRouter = {
   '/maps.js': function(request, response, parsedPath){
     methodRouter[request.method](request, response, parsedPath);
   },
-  'coords': function(){
+  'middle': function(){
     methodRouter[request.method](request, response);
   }
 };
@@ -76,11 +76,10 @@ var methodRouter = {
     request.on('end', function(err){
       if( err ) throw err;
 
-      var responseBody = dataBody; //depends on what user sends
-      
-      serveAssets(response, responseBody, 201);
-      
-      dataHandler(dataBody);
+      //send responseBody depending on logic in dataHandler
+      dataHandler(dataBody, function(responseBody){
+        serveAssets(response, responseBody, 201);
+      });
     });
 
   },
@@ -115,5 +114,6 @@ var defaultCorsHeaders = {
 
 module.exports = {
   requestHandler: requestHandler,
+  serveAssets: serveAssets,
   defaultCorsHeaders: defaultCorsHeaders
 }
