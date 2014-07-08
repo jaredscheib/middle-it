@@ -6,7 +6,7 @@ var initializeMiddleMap = function(middleDecision) {
   var map;
   var infowindow;
 
-  var middleCoords = new google.maps.LatLng(middleDecision.middleLong, middleDecision.middleLat);
+  var middleCoords = new google.maps.LatLng(middleDecision.middleLat, middleDecision.middleLong);
   // var middleCoords = new google.maps.LatLng($('input[name=user1Long]').val(), $('input[name=user1Lat]').val());
 
   var mapOptions = {
@@ -46,7 +46,12 @@ var initializeMiddleMap = function(middleDecision) {
     });
   };
 
-  $(mapCanvas).css({width: '500px', height: '500px'})
+  $(mapCanvas).css({
+    width: '500px',
+    height: '500px',
+    margin: '10px auto 0 auto',
+    border: '2px solid black'
+  });
   console.log($(mapCanvas));
 };
 

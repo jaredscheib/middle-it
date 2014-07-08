@@ -12,6 +12,8 @@ body {
 div #map-canvas {
   width: 500px;
   height: 500px;
+  margin: 10px auto 0 auto;
+  border: 2px solid black;
 }
 
 h1 {
@@ -38,7 +40,7 @@ input {
 }
 
 .textInput {
-	font-size: 20px;
+	font-size: 15px;
 	width: 80px;
 }
 
