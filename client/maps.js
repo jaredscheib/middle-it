@@ -2,32 +2,57 @@ var userData = {user: 'Jared', geoPosition: {}, venueType: ['bar']}
 var locationKnown = false;
 
 var initializeMiddleMap = function(middleDecision) {
-  middleCoords = {longitude: middleDecision.geoPosition.coords.longitude, latitude: middleDecision.geoPosition.coords.latitude};
+  var mapCanvas = document.getElementById('map-canvas');
+  var map;
+  var infowindow;
 
-  var middleCoordsGoogle = new google.maps.LatLng(middleCoords.longitude, middleCoords.latitude);
+  var middleCoords = new google.maps.LatLng(middleDecision.middleLong, middleDecision.middleLat);
+  // var middleCoords = new google.maps.LatLng($('input[name=user1Long]').val(), $('input[name=user1Lat]').val());
 
   var mapOptions = {
-    center: middleCoordsGoogle,
+    center: middleCoords,
     zoom: 15,
   };
-
+  map = new google.maps.Map(mapCanvas, mapOptions);
+  
   var request = {
-    location: middleCoordsGoogle,
+    location: middleCoords,
     radius: 500, //in meters
-    types: venueType
+    types: [middleDecision.winningVenue.winner]
   };
 
+  infowindow = new google.maps.InfoWindow();
+  
+  var service = new google.maps.places.PlacesService(map);
+  
+  service.nearbySearch(request, function(results, status){
+    if( status == google.maps.places.PlacesServiceStatus.OK ){
+      for( var i = 0; i < results.length; i++ ){
+        createMarker(results[i]);
+      }
+    }
+  });
 
+  var createMarker = function(place){
+    var placeLoc = place.geometry.location;
+    var marker = new google.maps.Marker({
+      map: map,
+      position: place.geometry.location
+    });
 
-  var mapCanvas = document.getElementById('map-canvas');
-  var map = new google.maps.Map(mapCanvas, mapOptions);
+    google.maps.event.addListener(marker, 'click', function(){
+      infowindow.setContent(place.name);
+      infowindow.open(map, this);
+    });
+  };
+
   $(mapCanvas).css({width: '500px', height: '500px'})
   console.log($(mapCanvas));
 };
 
 var sendUserData = function(user){
   if( !locationKnown ) {
-    console.log('location not known')
+    console.log('Location not yet known')
     return;
   }
   
@@ -43,7 +68,7 @@ var sendUserData = function(user){
     userData.geoPosition.coords.latitude = $('input[name=user2Lat]').val();
     userData.venueType[0] = $('input[name=user2Venue]').val();
   }
-  console.log(userData);
+  console.log('POST userData: ', userData);
 
   $.ajax({
     type: 'POST',
@@ -74,7 +99,6 @@ var loadScript = function() {
     $('input[name=user1Long]').val(userData.geoPosition.coords.longitude)
     $('input[name=user1Lat]').val(userData.geoPosition.coords.latitude)
     locationKnown = true;
-    console.log(userData);
   });
 };
 
