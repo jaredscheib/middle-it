@@ -91,12 +91,13 @@ var sendUserData = function(user){
 };
 
 var loadScript = function() {
-  var optIn = confirm('In order to use MiddleIt we will ask for your current location. Click Ok to accept or cancel to opt out.')
-  if( !optIn ) {
-    document.getElementById('ui').innerHTML += ('<span id="locationError">MiddleIt cannot be used without your location. \
-      Refresh the page to try again. Thank you for your understanding.</span>')
-    return;
-  }
+  $('body').removeClass('hide');
+  // var optIn = confirm('In order to use MiddleIt we will ask for your current location. Click Ok to accept or cancel to opt out.')
+  // if( !optIn ) {
+  //   document.getElementById('ui').innerHTML += ('<span id="locationError">MiddleIt cannot be used without your location. \
+  //     Refresh the page to try again. Thank you for your understanding.</span>')
+  //   return;
+  // }
 
   //If user opts in to browser ascertaining their location, send their coords to server
   window.navigator.geolocation.getCurrentPosition(function(geoPosition){

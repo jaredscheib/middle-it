@@ -16,6 +16,14 @@ div #map-canvas {
   border: 2px solid black;
 }
 
+.hide {
+	visibility: hidden;
+}
+
+.show {
+	visibility: visible;
+}
+
 h1 {
 	font-size: 45px;
 }
