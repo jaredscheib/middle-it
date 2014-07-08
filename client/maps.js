@@ -33,14 +33,14 @@ var sendUserData = function(user){
   
   userData['user'] = user;
   if( user === 'Jared' ){
-    userData.geoPosition.coords.longitude = $('input[name=user1X]').val();
-    userData.geoPosition.coords.latitude = $('input[name=user1Y]').val();
+    userData.geoPosition.coords.longitude = $('input[name=user1Long]').val();
+    userData.geoPosition.coords.latitude = $('input[name=user1Lat]').val();
     userData.venueType[0] = $('input[name=user1Venue]').val();
   }else if( user === 'Carly' ){
     //parse and stringify to get around not being able to set coords to send to server
     userData = JSON.parse(JSON.stringify(userData));
-    userData.geoPosition.coords.longitude = $('input[name=user2X]').val();
-    userData.geoPosition.coords.latitude = $('input[name=user2Y]').val();
+    userData.geoPosition.coords.longitude = $('input[name=user2Long]').val();
+    userData.geoPosition.coords.latitude = $('input[name=user2Lat]').val();
     userData.venueType[0] = $('input[name=user2Venue]').val();
   }
   console.log(userData);
@@ -51,6 +51,7 @@ var sendUserData = function(user){
     data: JSON.stringify(userData),
     success: function(serverResponse){
       var parsedResponse = JSON.parse(serverResponse);
+      console.log('Response from server: ', parsedResponse);
       if( parsedResponse.middleMatch ) initializeMiddleMap(parsedResponse);
     },
     error: function(){
@@ -70,9 +71,8 @@ var loadScript = function() {
   //If user opts in to browser ascertaining their location, send their coords to server
   window.navigator.geolocation.getCurrentPosition(function(geoPosition){
     userData['geoPosition'] = geoPosition;
-    $('input[name=user1X]').val(userData.geoPosition.coords.longitude)
-    $('input[name=user1Y]').val(userData.geoPosition.coords.latitude)
-    $('input[name=user1Y]').val(userData.geoPosition.coords.latitude)
+    $('input[name=user1Long]').val(userData.geoPosition.coords.longitude)
+    $('input[name=user1Lat]').val(userData.geoPosition.coords.latitude)
     locationKnown = true;
     console.log(userData);
   });
