@@ -1,69 +1,88 @@
 var fs = require('fs');
 var url = require('url');
+var path = require('path');
+var dataHandler = require('./data-handler.js').dataHandler;
 
 var requestHandler = function(request, response){
   console.log('Serving ' + request.method + ' request for ' + request.url);
   
-  var path = url.parse(request.url, true).pathname;
+  var parsedPath = url.parse(request.url, true).pathname;
 
-  if( !urlRouter[path] ){
+  if( !urlRouter[parsedPath] ){
     urlRouter['/'](request, response, '/');
   }else{
-    urlRouter[path](request, response, path);
+    urlRouter[parsedPath](request, response, parsedPath);
   }
 };
 
 var urlRouter = {
-  '/': function(request, response, path){
-    path = '/index.html'
-    methodRouter[request.method](request, response, path);
+  '/': function(request, response, parsedPath){
+    parsedPath = '/index.html'
+    methodRouter[request.method](request, response, parsedPath);
   },
-  '/index.html': function(request, response, path){
-    methodRouter[request.method](request, response, path);
+  '/index.html': function(request, response, parsedPath){
+    methodRouter[request.method](request, response, parsedPath);
   },
-  '/style.css': function(request, response, path){
-    methodRouter[request.method](request, response, path);
+  '/style.css': function(request, response, parsedPath){
+    methodRouter[request.method](request, response, parsedPath);
   },
-  '/maps.js': function(request, response, path){
-    methodRouter[request.method](request, response, path);
+  '/maps.js': function(request, response, parsedPath){
+    methodRouter[request.method](request, response, parsedPath);
+  },
+  'coords': function(){
+    methodRouter[request.method](request, response);
   }
 };
 
 var methodRouter = {
-  'GET': function(request, response, path){
+  'GET': function(request, response, parsedPath){
     var headers = defaultCorsHeaders;
-    var setHeaderByFileType = function(path){
+    var setHeaderByFileType = function(parsedPath){
       var fileType = '';
 
-      if( path.indexOf('.html') !== -1 ){
+      if( parsedPath.indexOf('.html') !== -1 ){
         fileType = '.html';
         headers['Content-Type'] = 'text/html';
-      }else if( path.indexOf('.css') !== -1 ){
+      }else if( parsedPath.indexOf('.css') !== -1 ){
         fileType = '.css';
         headers['Content-Type'] = 'text/css';
-      }else if( path.indexOf('.js') !== -1 ){
+      }else if( parsedPath.indexOf('.js') !== -1 ){
         fileType = '.js';
         headers['Content-Type'] = 'text/javascript';
       }else{
         fileType = 'other';
         headers['Content-Type'] = 'text/plain';
       }
-
-      console.log(path, fileType);
     };
-    setHeaderByFileType(path);
+    setHeaderByFileType(parsedPath);
     
-    fs.readFile('../client' + path, function(err, data){
+    fs.readFile(path.join(__dirname, '../client') + parsedPath, function(err, data){
       if( err ) throw err;
-      serveAssets(200, headers, response, data);
+      serveAssets(response, data, 200, headers);
     });
 
   },
 
   'POST': function(request, response){
-    var responseBody; //depends on what user sends
+    var headers = defaultCorsHeaders;
+    headers['Content-Type'] = 'text/plain';
 
-    serveAssets(201, response, responseBody);
+    var dataBody = '';
+    
+    request.on('data', function(d){
+      dataBody += d;
+    });
+
+    request.on('end', function(err){
+      if( err ) throw err;
+
+      var responseBody = 'Data received: ' + dataBody; //depends on what user sends
+      
+      serveAssets(response, responseBody, 201);
+      
+      dataHandler(dataBody);
+    });
+
   },
 
   'OPTIONS': function(request, response){
@@ -76,12 +95,13 @@ var methodRouter = {
       }
     };
 
-    serveAssets(200, response, responseBody);
+    serveAssets(response, responseBody, 200);
   }
 };
 
-var serveAssets = function(statusCode, headers, response, responseBody){
-  console.log(headers);
+var serveAssets = function(response, responseBody, statusCode, headers){
+  // console.log(headers, responseBody);
+  
   response.writeHead(statusCode, headers);
   response.end(responseBody);
 };

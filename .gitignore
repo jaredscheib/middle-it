@@ -43,3 +43,6 @@ build/Release
 # Azure
 azure.err
 iisnode.yml
+
+# API Key
+api_key.js
