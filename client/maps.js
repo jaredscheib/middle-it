@@ -2,6 +2,7 @@ var userData = {user: 'Jared', geoPosition: {}, venueType: ['bar']}
 var locationKnown = false;
 
 var initializeMiddleMap = function(middleDecision) {
+  var venueChoices = [];
   var mapCanvas = document.getElementById('map-canvas');
   var map;
   var infowindow;
@@ -11,7 +12,7 @@ var initializeMiddleMap = function(middleDecision) {
 
   var mapOptions = {
     center: middleCoords,
-    zoom: 18,
+    zoom: 17,
   };
   map = new google.maps.Map(mapCanvas, mapOptions);
   
@@ -30,7 +31,11 @@ var initializeMiddleMap = function(middleDecision) {
   service.nearbySearch(request, function(results, status){
     if( status == google.maps.places.PlacesServiceStatus.OK ){
       for( var i = 0; i < results.length; i++ ){
-
+        if( i === 3 ){
+          revealChoice2(venueChoices);
+        }
+        venueChoices.push(results[i]);
+        console.log(results[i]);
         createMarker(results[i]);
       }
     }
@@ -57,14 +62,20 @@ var initializeMiddleMap = function(middleDecision) {
       infowindow.open(map, this);
     });
   };
+};
 
-  $(mapCanvas).css({
-    width: '500px',
-    height: '500px',
-    margin: '10px auto 0 auto',
-    border: '2px solid black'
-  });
-  console.log($(mapCanvas));
+var revealChoice2 = function(venueChoices){
+  debugger;
+  console.log(venueChoices);
+  var len = venueChoices.length;
+  for( var i = 0; i < len; i++ ){
+    $('#user1VenueChoice').append('<option value="'+venueChoices[i].name+'">'+venueChoices[i].name+'</option>');
+    $('#user2VenueChoice').append('<option value="'+venueChoices[i].name+'">'+venueChoices[i].name+'</option>');
+  }
+  $('#user1VenueChoice').val('bar').css({width: '140px'});
+  $('#user2VenueChoice').val('bar').css({width: '140px'});
+
+  $('.hide').removeClass('hide');
 };
 
 var sendUserData = function(user){
@@ -77,13 +88,13 @@ var sendUserData = function(user){
   if( user === 'Jared' ){
     userData.geoPosition.coords.longitude = $('input[name=user1Long]').val();
     userData.geoPosition.coords.latitude = $('input[name=user1Lat]').val();
-    userData.venueType[0] = $('#user1Venue').val();
+    userData.venueType[0] = $('#user1VenueType').val();
   }else if( user === 'Carly' ){
     //parse and stringify to get around not being able to set coords to send to server
     userData = JSON.parse(JSON.stringify(userData));
     userData.geoPosition.coords.longitude = $('input[name=user2Long]').val();
     userData.geoPosition.coords.latitude = $('input[name=user2Lat]').val();
-    userData.venueType[0] = $('#user2Venue').val();
+    userData.venueType[0] = $('#user2VenueType').val();
   }
   console.log('POST userData: ', userData);
 
@@ -223,11 +234,11 @@ var populateSelects = function(){
 
   var len = venueTypes.length;
   for( var i = 0; i < len; i++ ){
-    $('#user1Venue').append('<option value="'+venueTypes[i]+'">'+venueTypes[i].substr(0, 1).toUpperCase()+venueTypes[i].substr(1)+'</option>')
-    $('#user2Venue').append('<option value="'+venueTypes[i]+'">'+venueTypes[i].substr(0, 1).toUpperCase()+venueTypes[i].substr(1)+'</option>')
+    $('#user1VenueType').append('<option value="'+venueTypes[i]+'">'+venueTypes[i].substr(0, 1).toUpperCase()+venueTypes[i].substr(1)+'</option>');
+    $('#user2VenueType').append('<option value="'+venueTypes[i]+'">'+venueTypes[i].substr(0, 1).toUpperCase()+venueTypes[i].substr(1)+'</option>');
   }
-  $('#user1Venue').val('bar');
-  $('#user2Venue').val('bar');
+  $('#user1VenueType').val('bar');
+  $('#user2VenueType').val('bar');
 };
 
 window.onload = loadScript;

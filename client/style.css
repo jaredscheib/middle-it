@@ -37,8 +37,12 @@ div {
 	float: left;
 	width: 500px;
 	height: 500px;
-	margin: 10px auto 0 auto;
+	margin: -30px auto 0 auto;
 	border: 2px solid black;
+}
+
+.clear {
+	clear:both;
 }
 
 h1 {
@@ -46,7 +50,7 @@ h1 {
 }
 
 h2 {
-	margin-bottom: -10px;
+	margin-bottom: 0px;
 	text-align: center;
 	font-size: 35px;
 }
@@ -68,15 +72,29 @@ span {
 
 input {
 	padding: 5px;
-}
-
-.input {
 	font-size: 15px;
 	width: 80px;
+	border-radius: 10px;
 }
 
 .sendUserData {
-	font-size: 20px;
-	width: 150px;
+	float: left;
+	font-size: 15px;
+	width: 120px;
+	margin-top: 10px;
 	margin-left: 80px;
+	background-color: #0099FF;
+	color: white;
+	border-radius: 10px;
+}
+
+select[class=selector] {
+	width: 140px;
+	font-size: 15px;
+	width: 80px;
+	border-radius: 10px;	
+}
+
+hr {
+	margin-top: 65px;
 }

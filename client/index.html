@@ -12,24 +12,44 @@
   <body class="hide">
     <div id="ui">
       <h1>MiddleIt</h1>
-      <div id="location1" class='userDiv'>
-        <h2>User One</h2>
-        <span>Location:</span>
-        <input class="input" name="user1Long" type="text" placeholder="Longitude">
-        <input class="input" name="user1Lat" type="text" placeholder="Latitude"><br>
-        <span class="venueType">Venue:</span>
-        <select class="input" id="user1Venue"></select><br>
-        <input class="sendUserData" type="button" value="Send User One Data" onclick="sendUserData('Jared')">
+      <div id="user1" class='userDiv'>
+        <div class="choice1">
+          <h2>User One</h2>
+          <span>Location:</span>
+          <input class="input" name="user1Long" type="text" placeholder="Longitude">
+          <input class="input" name="user1Lat" type="text" placeholder="Latitude"><br>
+          <hr style="margin-top: 20px">
+          <span class="venueType">Venue:</span>
+          <select class="selector" id="user1VenueType"></select><br>
+          <input class="sendUserData" type="button" value="Send" onclick="sendUserData('Jared')">
+        </div>
+        <hr class="hide">
+        <div id="user1choice2" class="hide">
+          <span class="venueType">Choice:</span>
+          <select class="selector" id="user1VenueChoice"></select><br>
+          <input class="sendUserData" type="button" value="Send" onclick="sendUserData('Jared')">
+          <hr class="hide">
+        </div>
       </div>
       <div id="map-canvas"></div>
-      <div id="location2" class='userDiv'>
-        <h2>User Two</h2>
-        <span>Location:</span>
-        <input class="input" name="user2Long" type="text" placeholder="Longitude">
-        <input class="input" name="user2Lat" type="text" placeholder="Latitude"><br>
-        <span class="venueType">Venue:</span>
-        <select class="input" id="user2Venue"></select><br>
-        <input class="sendUserData" type="button" value="Send User Two Data" onclick="sendUserData('Carly')">
+      <div id="user2" class='userDiv'>
+        <div class="choice1">
+          <h2>User Two</h2>
+          <span>Location:</span>
+          <input class="input" name="user2Long" type="text" placeholder="Longitude">
+          <input class="input" name="user2Lat" type="text" placeholder="Latitude"><br>
+          <hr style="margin-top: 20px">
+          <span class="venueType">Venue:</span>
+          <select class="selector" id="user2VenueType"></select><br>
+          <input class="sendUserData" type="button" value="Send" onclick="sendUserData('Carly')">
+        </div>
+        <hr class="hide">
+        <div id="user2choice2" class="hide">
+          <span class="venueType">Choice:</span>
+          <select class="selector" id="user2VenueChoice"></select><br>
+          <input class="sendUserData" type="button" value="Send" onclick="sendUserData('Carly')">
+          <hr class="hide">
+        </div>
       </div>
     </div>
   </body>
