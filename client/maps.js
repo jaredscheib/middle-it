@@ -156,6 +156,9 @@ var responseRouter = {
   },
   venueTypeChosen: function(response){
     initializeMiddleMap(response);
+  },
+  venueChosen: function(response){
+    alert("The group voted. You're heading to "+ response.winner.winningChoice + "! Directions coming soon in the next point upgrade.");
   }
 };
 

@@ -43,7 +43,6 @@ var dataRouter = {
       responseBody.type = 'userCoords';
       responseBody.data = data;
     }
-    console.log('users!', JSON.stringify(users));
     callback(JSON.stringify(responseBody));
   },
 
@@ -56,7 +55,7 @@ var dataRouter = {
       responseBody.data = {};
       responseBody.data.coords = findGeoMiddle(users);
       responseBody.data.winner = tallyWinner('venueType');
-      console.log('findGeoMiddle: ', responseBody.data.coords, 'tallyWinner: ', responseBody.data.winningVenueType);
+      // console.log('findGeoMiddle: ', responseBody.data.coords, 'tallyWinner: ', responseBody.data.winningVenueType);
     }
     callback(JSON.stringify(responseBody)); //TO DO: no need to send responseBody
   },
@@ -65,16 +64,20 @@ var dataRouter = {
     users[data.user].venueChoice = data.venueChoice;
     venueChoiceCount++;
 
+    console.log('users!', JSON.stringify(users));
+
     if( venueChoiceCount === usersInGroup ){
       //determine venue choice
-      //send venue choice
-    }else{
+      responseBody.type = 'venueChosen';
+      responseBody.data = {};
+      responseBody.data.coords = findGeoMiddle(users);
+      responseBody.data.winner = tallyWinner('venueChoice');
     }
     callback(JSON.stringify(responseBody)); //TO DO: no need to send responseBody
   },
 
   venueChoicesArray: function(data, responseBody, callback){
-    venueChoicesArray = responseBody;
+    venueChoicesArray = responseBody.data;
     console.log('venueChoicesArray: ', venueChoicesArray);
     callback(JSON.stringify(responseBody)); //TO DO: no need to send responseBody
   }
