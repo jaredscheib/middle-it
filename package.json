@@ -1,6 +1,6 @@
 {
   "name": "middle-it",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "App to connect friends in different locations",
   "main": "server.js",
   "scripts": {

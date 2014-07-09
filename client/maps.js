@@ -81,7 +81,7 @@ var revealVenueChoice = function(venueChoices){
   $('#user1VenueChoice').val('bar').css({width: '140px'});
   $('#user2VenueChoice').val('bar').css({width: '140px'});
 
-  $('.hide').removeClass('hide');
+  $('.userVenueChoice').css('visibility', 'visible');
 };
 
 var sendVenueType = function(user){

@@ -21,6 +21,10 @@ div {
 	overflow: hidden;
 }
 
+.userVenueChoice {
+	visibility: hidden;
+}
+
 .userDiv {
 	float: left;
 	padding: 20px;
