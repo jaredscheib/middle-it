@@ -5,10 +5,11 @@ var google_api = process.env.GOOGLE_API || api_keys.google_api;
 
 var usersInGroup = 2; //would have a host user set this number and wait period for member responses
 var users = {};
+var venueChoicesArray = [];
+var venueTypeCount = 0;
 var venueChoiceCount = 0;
 
 var User = function(data){
-  console.log('data!: ', data);
   this.user = data.user;
   this.geoPosition = data.geoPosition;
   this.venueType = data.venueType;
@@ -18,6 +19,8 @@ var dataHandler = function(data, callback){
   var responseBody = {}; //response synthesized from users in MiddleIt group
   responseBody.type = 'user'; //if just a user signing up or logging in (likely overwritten below)
   var data = JSON.parse(data);
+
+  console.log('data!', data);
   
   dataRouter[data.type](data, responseBody, callback);
 
@@ -32,18 +35,30 @@ var dataRouter = {
     
     users[data.user] = new User(data); //replace user if new geocoords sent
     
-    console.log('DATA!', data, 'USERS!', users);
 
     if( Object.keys(users).length === usersInGroup ){ //if all users in group have submitted coords
       responseBody.type = 'middleCoords';
       responseBody.data = findGeoMiddle(users);
-      console.log('middle: ', responseBody.data);
     }else{
       responseBody.type = 'userCoords';
       responseBody.data = data;
     }
-
+    console.log('users!', JSON.stringify(users));
     callback(JSON.stringify(responseBody));
+  },
+
+  venueType: function(data, responseBody, callback){
+    users[data.user].venueType = data.venueType;
+    venueTypeCount++;
+
+    if( venueTypeCount === usersInGroup ){
+      responseBody.type = 'venueTypeChosen';
+      responseBody.data = {};
+      responseBody.data.coords = findGeoMiddle(users);
+      responseBody.data.winner = tallyWinner('venueType');
+      console.log('findGeoMiddle: ', responseBody.data.coords, 'tallyWinner: ', responseBody.data.winningVenueType);
+    }
+    callback(JSON.stringify(responseBody)); //TO DO: no need to send responseBody
   },
 
   venueChoice: function(data, responseBody, callback){
@@ -55,12 +70,13 @@ var dataRouter = {
       //send venue choice
     }else{
     }
-    callback(JSON.stringify(responseBody));
+    callback(JSON.stringify(responseBody)); //TO DO: no need to send responseBody
   },
 
-  venueType: function(data, responseBody, callback){
-
-    callback(JSON.stringify(responseBody));
+  venueChoicesArray: function(data, responseBody, callback){
+    venueChoicesArray = responseBody;
+    console.log('venueChoicesArray: ', venueChoicesArray);
+    callback(JSON.stringify(responseBody)); //TO DO: no need to send responseBody
   }
 };
 
@@ -83,22 +99,32 @@ var findGeoMiddle = function(users){
   return middle;
 };
 
-var tallyWinner = function(pool){
-  var venueCount = {};
-  result.winningVenue = {winner: 'bar', votes: 0};
+var tallyWinner = function(type){
+  var tallyObj = {};
+  var result = {};
 
-  //tally venues among group, single venue only, unweighted
-  if( !venueCount[users[i].venueType] ) venueCount[users[i].venueType] = 0;
-  venueCount[users[i].venueType]++;
-  console.log(result);
+  //tallyObj venues among group, single venue only, unweighted
+  for( var user in users ){
+    if( !tallyObj[users[user][type]] ) tallyObj[users[user][type]] = 0;
+    tallyObj[users[user][type]]++;
+  }
 
-  for( var item in pool ){
+  result.winner = 'bar';
+  result.votes = 0;
+
+  for( var item in tallyObj ){
     //TO DO: account for ties; currently only takes one winner
-    if( pool[item] > result.winningitem['votes'] ){
-      result.winningItem['winner'] = item;
-      result.winningItem['votes'] = pool[item];
+    if( tallyObj[item] > result.votes ){
+      result.winner = item;
+      result.votes = tallyObj[item];
     }
   }
+
+  console.log('tallyObj: ', tallyObj, 'result: ', result);
+  return {
+    winningChoice: result.winner,
+    winningVotes: result.votes
+  };
 };
 
 module.exports = {

@@ -12,7 +12,7 @@ var initializeMiddleMap = function(middleDecision) {
   var map;
   var infowindow;
 
-  var middleCoords = new google.maps.LatLng(middleDecision.middleLat, middleDecision.middleLong);
+  var middleCoords = new google.maps.LatLng(middleDecision.coords.middleLat, middleDecision.coords.middleLong);
   // var middleCoords = new google.maps.LatLng($('input[name=user1Long]').val(), $('input[name=user1Lat]').val());
 
   var mapOptions = {
@@ -24,7 +24,7 @@ var initializeMiddleMap = function(middleDecision) {
   var request = {
     location: middleCoords,
     // radius: 200, //in meters
-    types: [middleDecision.winningItem.winner],
+    types: [middleDecision.winner.winningChoice], //also have winner.winningVotes for vote count
     openNow: true,
     rankBy: google.maps.places.RankBy.DISTANCE
   };
@@ -37,9 +37,10 @@ var initializeMiddleMap = function(middleDecision) {
     if( status == google.maps.places.PlacesServiceStatus.OK ){
       for( var i = 0; i < results.length; i++ ){
         if( i === 5 ){ //number of choices to reveal to users
-          revealChoice2(venueChoices);
+          revealVenueChoice(venueChoices);
         }
         venueChoices.push(results[i]);
+        postData({type: 'venueChoicesArray', data: venueChoices}); //send all choices to server
         console.log(results[i]);
         createMarker(results[i]);
       }
@@ -69,8 +70,8 @@ var initializeMiddleMap = function(middleDecision) {
   };
 };
 
-var revealChoice2 = function(venueChoices){
-  debugger;
+var revealVenueChoice = function(venueChoices){
+  // debugger;
   console.log(venueChoices);
   var len = venueChoices.length;
   for( var i = 0; i < len; i++ ){
@@ -84,7 +85,10 @@ var revealChoice2 = function(venueChoices){
 };
 
 var sendVenueType = function(user){
-  userData['user'] = user;
+  userData = {};
+  userData.user = user;
+  userData.type = 'venueType';
+  userData.venueType = [];
   if( user === 'Sam' ){
     userData.venueType[0] = $('#user1VenueType').val();
   }else if( user === 'Evan' ){
@@ -95,27 +99,47 @@ var sendVenueType = function(user){
   console.log('POST userData: ', userData);
 };
 
+var sendVenueChoice = function(user){
+  userData = {};
+  userData.user = user;
+  userData.type = 'venueChoice';
+  userData.venueChoice = [];
+  if( user === 'Sam' ){
+    userData.venueChoice[0] = $('#user1VenueChoice').val();
+  }else if( user === 'Evan' ){
+    userData.venueChoice[0] = $('#user2VenueChoice').val();
+  }
+
+  postData(userData);
+  console.log('POST userData: ', userData);
+};
+
 var sendCustomGeoposition = function(user){
-  userData['user'] = user;
-  userData = JSON.parse(JSON.stringify(userData)); //workaround to set coords
+  userData = {}; // emulates users from different computers using the service
+  userData.user = user;
+  // userData = JSON.parse(JSON.stringify(userData)); //workaround to set coords
   userData.type = 'geoPosition';
-  userData.geoPosition.coords.longitude = $('input[name=user2Long]').val();
-  userData.geoPosition.coords.latitude = $('input[name=user2Lat]').val();
+  userData.geoPosition = {
+    coords: {
+      longitude: $('input[name=user2Long]').val(),
+      latitude: $('input[name=user2Lat]').val()
+    }
+  };
   postData(userData);
 };
 
-var postData = function(userData){
+var postData = function(data){
   $.ajax({
     type: 'POST',
     url: 'middle',
-    data: JSON.stringify(userData),
+    data: JSON.stringify(data),
     success: function(serverResponse){
       serverResponse = JSON.parse(serverResponse);
       console.log('Response from server: ', serverResponse);
       responseRouter[serverResponse.type](serverResponse.data);
     },
     error: function(){
-      console.log('Failed to POST '+JSON.stringify(userData)+'. Please try again.');
+      console.log('Failed to POST '+JSON.stringify(data)+'. Please try again.');
     }
   });
 };
@@ -129,6 +153,8 @@ var responseRouter = {
   },
   middleCoords: function(response){
     console.log('Successfully matched middle: ', response);
+  },
+  venueTypeChosen: function(response){
     initializeMiddleMap(response);
   }
 };
